@@ -1,13 +1,51 @@
+import axios from "axios";
 import { useState } from "react";
+import Spinner from "./Spinner";
 
 export default function UploadMemePage() {
 
   const [caption, setCaption] = useState('');
   const [file, setFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('hello!');
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    console.log("Uploading:", { file, caption });
+
+    if (!file) {
+      alert("Please select an image file.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("caption", caption);
+
+      const response = await axios.post(
+        "http://localhost:8000/api/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      setMessage(response.data.message);
+
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setMessage(error.response?.data?.message || "An error occurred while uploading the meme.");
+      } else {
+        setMessage("An unexpected error occurred.");
+      }
+    } finally {
+      setLoading(false);
+      setFile(null);
+      setCaption('');
+    }
   }
 
   return (
@@ -43,13 +81,21 @@ export default function UploadMemePage() {
         />
 
         {/* submit button */}
-        <button
-          type="submit"
-          className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
-        >
-          Upload
-        </button>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <button
+            type="submit"
+            className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
+          >
+            Upload
+          </button>)}
+
+        {/* message display */}
+        {message && (
+          <p className="text-center text-sm text-gray-700 mt-2">{message}</p>
+        )}
       </form>
-    </div>
+    </div >
   )
 }
