@@ -18,7 +18,6 @@ export default function ViewMemePage() {
 
     try {
       const response = await axios.get("http://localhost:8000/api/random-meme");
-      console.log(response.data);
       setCurrentMeme({
         url: response.data.url,
         caption: response.data.caption ?? "No caption available"

@@ -49,7 +49,6 @@ def get_random_meme():
     return form_response(HTTP_204_NO_CONTENT, "message", "There are no memes available in the bucket.")
   blob = random.choice(blobs)
   url = f"https://storage.googleapis.com/{BUCKET_NAME}/{blob.name}"
-  print(url)
   return form_response(HTTP_200_OK, "url", url, "caption", blob.metadata.get("caption"))
 
 def form_response(status_code: int, *args):
