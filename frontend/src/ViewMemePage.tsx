@@ -1,4 +1,6 @@
+import axios from "axios";
 import { useState } from "react";
+import Spinner from "./Spinner";
 
 type Meme = {
   url: string;
@@ -6,50 +8,67 @@ type Meme = {
 }
 
 export default function ViewMemePage() {
-  const [memes, setMemes] = useState<Meme[]>([
-    {
-      url: "https://i.imgflip.com/1bij.jpg",
-      caption: "meme1",
-    },
-    {
-      url: "https://i.imgflip.com/26am.jpg",
-      caption: "meme2",
-    },
-  ]);
 
   const [currentMeme, setCurrentMeme] = useState<Meme | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const showRandomMeme = () => {
-    if (memes.length === 0) return;
-    const randomIndex = Math.floor(Math.random() * memes.length);
-    setCurrentMeme(memes[randomIndex]);
-  };
+  const showRandomMeme = async () => {
+    setLoading(true);
+
+    try {
+      const response = await axios.get("http://localhost:8000/api/random-meme");
+      console.log(response.data);
+      setCurrentMeme({
+        url: response.data.url,
+        caption: response.data.caption ?? "No caption available"
+      });
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data?.message || "An error occurred while fetching the meme.");
+      } else {
+        setError("An unexpected error occurred.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="p-6 text-center">
       <h1 className="text-2xl font-bold mb-6">Random Meme Viewer</h1>
 
-      <button
-        onClick={showRandomMeme}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition mb-6"
-      >
-        Show Random Meme
-      </button>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <button
+          onClick={showRandomMeme}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition mb-6"
+        >
+          Show Random Meme
+        </button>
+      )}
 
       {currentMeme && (
-        <div className="max-w-md mx-auto bg-white shadow rounded p-4">
+        <div className="max-w-md mx-auto shadow rounded p-4">
           <img
             src={currentMeme.url}
             alt={currentMeme.caption}
-            className="w-full h-64 object-cover rounded"
+            className="w-full rounded"
+            style={{ height: 'auto' }}
           />
           <p className="mt-2 text-gray-700">{currentMeme.caption}</p>
         </div>
       )}
 
-      {!currentMeme && (
+      {!currentMeme && !loading && !error && (
         <p className="text-gray-500">Click the button to view a random meme.</p>
       )}
+
+      {error && (
+        <p className="text-red-500 mt-4">{error}</p>
+      )}
+
     </div>
   );
 }

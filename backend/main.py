@@ -49,10 +49,13 @@ def get_random_meme():
     return form_response(HTTP_204_NO_CONTENT, "message", "There are no memes available in the bucket.")
   blob = random.choice(blobs)
   url = f"https://storage.googleapis.com/{BUCKET_NAME}/{blob.name}"
-  return form_response(HTTP_200_OK, "message", url)
+  print(url)
+  return form_response(HTTP_200_OK, "url", url, "caption", blob.metadata.get("caption"))
 
-def form_response(status_code: int, title: str, message: str):
+def form_response(status_code: int, *args):
+  assert len(args) % 2 == 0, "Arguments must be in pairs of (title, message)"
+  content = {args[i]: args[i + 1] for i in range(0, len(args), 2)}
   return JSONResponse(
       status_code=status_code,
-      content={ title : message }
+      content=content
   )
