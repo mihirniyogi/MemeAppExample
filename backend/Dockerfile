@@ -18,10 +18,10 @@ COPY . .
 # ENV GOOGLE_APPLICATION_CREDENTIALS="/app/service-account.json"
 
 # informs docker about port usage
-EXPOSE 8000
+EXPOSE 8080
 
 # run fastapi app on port 8000
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
 
 # ----------- for developer's information ----------- #
 
