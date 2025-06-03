@@ -19,16 +19,22 @@ export default function ViewMemePage() {
 
     try {
       const response = await axios.get(API_URL_VIEW);
+      const url = response.data.url;
+      if (!url) {
+        throw new Error("No meme URL returned from the server.");
+      }
       setCurrentMeme({
         url: response.data.url,
         caption: response.data.caption ?? "No caption available"
       });
       setError('');
+
+      console.log(response.data);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         setError(error.response?.data?.message || "An error occurred while fetching the meme.");
       } else {
-        setError("An unexpected error occurred.");
+        setError(error instanceof Error ? error.message : "An unexpected error occurred.");
       }
     } finally {
       setLoading(false);
