@@ -16,7 +16,7 @@ app = FastAPI()
 # middleware to handle CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://memeappexample.web.app/"],
+    allow_origins=["https://memeappexample.web.app", "https://memeappexample.firebaseapp.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
