@@ -1,0 +1,50 @@
+name: Deploy Backend to Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+
+jobs:
+  build-and-deploy:
+    
+    name: Deploy to Cloud Run
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      # 1. Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Authenticate Google Cloud
+      - name: Authenticate Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      
+      # 3. Configure Docker
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker asia-southeast1-docker.pkg.dev
+
+      # 4. Build and push Docker image
+      - name: Build and push Docker image
+        run: |
+          IMAGE="asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/backend/memebackend:latest"
+          docker build -t $IMAGE ./backend
+          docker push $IMAGE
+      
+      # 5. Deploy image to Cloud Run
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: memebackend
+          image: asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/backend/memebackend:latest
+          region: asia-southeast1
+      

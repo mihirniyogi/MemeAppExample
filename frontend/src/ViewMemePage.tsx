@@ -22,6 +22,7 @@ export default function ViewMemePage() {
         url: response.data.url,
         caption: response.data.caption ?? "No caption available"
       });
+      setError('');
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         setError(error.response?.data?.message || "An error occurred while fetching the meme.");
