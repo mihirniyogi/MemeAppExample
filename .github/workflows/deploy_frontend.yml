@@ -37,3 +37,4 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MEMEAPPEXAMPLE }}
           channelId: live
           projectId: memeappexample
+          entryPoint: frontend
