@@ -5,6 +5,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from google.cloud import storage
 
+# local only
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "service-account.json"
+
 # GCS Client
 BUCKET_NAME = "meme-app-example"
 client = storage.Client()
@@ -16,7 +19,7 @@ app = FastAPI()
 # middleware to handle CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://memeappexample.web.app", "https://memeappexample.firebaseapp.com"],
+    allow_origins=["http://localhost:5173", "https://memeappexample.web.app", "https://memeappexample.firebaseapp.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
