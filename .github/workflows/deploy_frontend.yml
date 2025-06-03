@@ -25,6 +25,8 @@ jobs:
       # 2. Install dependencies and build
       - name: Install dependencies and build
         working-directory: frontend
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
         run: |
           npm ci
           npm run build
