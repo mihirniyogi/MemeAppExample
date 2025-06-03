@@ -12,12 +12,13 @@ export default function ViewMemePage() {
   const [currentMeme, setCurrentMeme] = useState<Meme | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const API_URL_VIEW = `${import.meta.env.VITE_API_URL}/api/random-meme`;
 
   const showRandomMeme = async () => {
     setLoading(true);
 
     try {
-      const response = await axios.get("http://localhost:8000/api/random-meme");
+      const response = await axios.get(API_URL_VIEW);
       setCurrentMeme({
         url: response.data.url,
         caption: response.data.caption ?? "No caption available"

@@ -8,6 +8,7 @@ export default function UploadMemePage() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const API_URL_UPLOAD = `${import.meta.env.VITE_API_URL}/api/upload`;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -24,7 +25,7 @@ export default function UploadMemePage() {
       formData.append("caption", caption);
 
       const response = await axios.post(
-        "http://localhost:8000/api/upload",
+        API_URL_UPLOAD,
         formData,
         {
           headers: {
