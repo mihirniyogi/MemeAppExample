@@ -9,7 +9,7 @@ on:
       - '.github/workflows/deploy_backend.yml'
 
 jobs:
-  build-and-deploy:
+  build_and_deploy:
     
     name: Deploy to Cloud Run
     runs-on: ubuntu-latest
